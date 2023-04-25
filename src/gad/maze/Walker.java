@@ -11,61 +11,106 @@ public class Walker {
 	}
 
 	public boolean walk() {
+
+		//0 = down; 1 = right; 2 = up; 3 = left
+		int walkingDirection = 0;
 		int x = 1;
 		int y = 0;
-		boolean[][] blocked = maze;
-		boolean left = true;
-		boolean right = true;
-		boolean down = true;
-		boolean up = true;
+		boolean xToLittle = false;
+		boolean xToLarge = false;
+		boolean yToLittle = false;
+		boolean yToLarge = false;
 
-		result.addLocation(x, y);
+		//Log the starting point
+		result.addLocation(x,y);
 
+		//The maximum length of a path would be to visit every field
+		//which is not possible due to walls however if loops occur the
+		//algorithm should be stopped at some point.
 		for(int i = 0; i < maze.length * maze[0].length; i++) {
-			if (x == maze.length - 1 && y == maze[0].length - 2)
+			if(x == maze.length - 1 && y == maze[0].length - 2) {
 				return true;
-
-			if(x < maze.length - 1)
-				right = blocked[x + 1][y];
-			if(y < maze[0].length - 1)
-				down = blocked[x][y + 1];
-			if(x > 0)
-				left = blocked[x - 1][y];
-			if(y > 0)
-				up = blocked[x][y - 1];
-
-
-			//If wall is right, left and in front go back
-			if (down && right && left) {
-				blocked[x][y] = true;
-				//y--;
-			}
-			//If wall is left, in front and above go back
-			else if (up && down && left) {
-				blocked[x][y] = true;
-				//x++;
-			}
-			//If wall is right, in front and above go back
-			 else if (down && right && up) {
-				blocked[x][y] = true;
-				//x--;
-			}
-			//If wall is right, left and above go back
-			else if (up && right && left) {
-				blocked[x][y] = true;
-				//y++;
 			}
 
-			if(!down)
-				y++;
-			else if (!right)
-				x++;
-			else if (!left)
-				x--;
-			else if (!up)
-				y--;
+			//Preventing index out of bounds and decreasing runtime by
+			//validating once every loop instead of validating in every if statement.
+			xToLarge = !(x < maze.length - 1);
+			xToLittle = !(x > 0);
+			yToLarge = !(y < maze[0].length - 1);
+			yToLittle = !(y > 0);
 
-			result.addLocation(x, y);
+			//Using a switch statement to effectively switch the algorithms behaviour for every walking direction.
+			//The algorithm looks at the field right to the player and the next one in the walking direction.
+			//If there is no wall on the right of the player the direction is changed until there is a wall on the right.
+			//If the next field in walking direction is a wall the direction is changed until the path is not blocked anymore.
+			//If a step was executed it is checked weather the new field to the right is free.
+			//If so the walking direction is changed and the step into the free field is taken.
+			switch (walkingDirection) {
+				//going down
+				case 0:
+					if(!xToLittle && !yToLarge && maze[x-1][y] && !maze[x][y+1]) {
+						y++;
+						result.addLocation(x,y);
+						if(!maze[x-1][y]) {
+							x--;
+							result.addLocation(x,y);
+							walkingDirection = 3;
+						}
+						break;
+					} else {
+						walkingDirection = 1;
+						break;
+					}
+
+
+				//going right
+				case 1:
+					if(!xToLarge && !yToLarge && maze[x][y+1] && !maze[x+1][y]) {
+						x++;
+						result.addLocation(x,y);
+						if(!maze[x][y+1]) {
+							y++;
+							result.addLocation(x,y);
+							walkingDirection = 0;
+						}
+						break;
+					} else {
+						walkingDirection = 2;
+						break;
+					}
+
+				//going up
+				case 2:
+					if(!xToLarge && !yToLittle && maze[x+1][y] && !maze[x][y-1]) {
+						y--;
+						result.addLocation(x,y);
+						if(!maze[x+1][y]) {
+							x++;
+							result.addLocation(x,y);
+							walkingDirection = 1;
+						}
+						break;
+					} else {
+						walkingDirection = 3;
+						break;
+					}
+
+				//going left
+				case 3:
+					if(!xToLittle && !yToLittle && maze[x][y-1] && !maze[x-1][y]) {
+						x--;
+						result.addLocation(x,y);
+						if(!maze[x][y-1]) {
+							y--;
+							result.addLocation(x,y);
+							walkingDirection = 2;
+						}
+						break;
+					} else {
+						walkingDirection = 0;
+						break;
+					}
+			}
 		}
 		return false;
 	}
