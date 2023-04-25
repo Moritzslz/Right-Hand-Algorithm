@@ -59,7 +59,6 @@ public class Walker {
 						break;
 					} else {
 						walkingDirection = 1;
-						break;
 					}
 
 
@@ -76,7 +75,6 @@ public class Walker {
 						break;
 					} else {
 						walkingDirection = 2;
-						break;
 					}
 
 				//going up
@@ -92,7 +90,6 @@ public class Walker {
 						break;
 					} else {
 						walkingDirection = 3;
-						break;
 					}
 
 				//going left
@@ -108,7 +105,6 @@ public class Walker {
 						break;
 					} else {
 						walkingDirection = 0;
-						break;
 					}
 			}
 		}
