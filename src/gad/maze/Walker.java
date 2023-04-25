@@ -11,6 +11,9 @@ public class Walker {
 	}
 
 	public boolean walk() {
+		//Edge case maze is empty
+		if(maze.length == 0)
+			return false;
 
 		//0 = down; 1 = right; 2 = up; 3 = left
 		int walkingDirection = 0;
@@ -31,6 +34,8 @@ public class Walker {
 			if(x == maze.length - 1 && y == maze[0].length - 2) {
 				return true;
 			}
+			if(i != 0 && x == 1 && y == 0)
+				return false;
 
 			//Preventing index out of bounds and decreasing runtime by
 			//validating once every loop instead of validating in every if statement.
